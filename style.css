@@ -1,0 +1,38 @@
+*{
+    font-family: Trebuchet MS;
+    margin: 0;
+    padding: 0;
+}
+#main{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    height: 100vh;
+    background-color: rgb(70, 66, 66);
+}
+#playingField{
+    border: 3px solid black;
+    border-radius: 5px;
+    display: grid;
+    grid-template-columns: repeat(20, 20px);
+    grid-template-rows: repeat(20, 20px);
+    background-color: lightgreen;
+    margin: 10px;
+    position: absolute;
+}
+.snake{
+    border: 1px solid black;
+    background-color: rgb(70, 66, 66);
+    border-radius: 10%;
+}
+.food{
+    border: 1px solid rgb(181, 34, 34);
+    background-color: rgb(161, 22, 22);
+    border-radius: 50%;
+}
+#start{
+    position: absolute;
+    top: 180px;
+    left: 130px;
+}
