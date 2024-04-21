@@ -3,9 +3,10 @@ const startCard = document.getElementById("start");
 let snake = [{x: 10, y: 10}];
 let food = {x: random(), y: random()};
 let direction = "left";
+let gameSpeed = 100;
 
 function random(){
-    return Math.floor(Math.random() * 21);
+    return Math.floor(Math.random() * 20) + 1;
 }
 
 function findPosition(element, position){
@@ -22,6 +23,7 @@ function removeAll(parent, nameOfClass){
 const drawSnake = () => {
     moveSnake();
     makeSnake();
+    collision();
 }
 
 const makeSnake = () => {
@@ -57,21 +59,57 @@ const moveSnake = () => {
             break;
     }
     snake.unshift(head);
-    snake.pop();
+    if(head.x == food.x && head.y == food.y){
+        removeAll(field, "food");
+        food = {x: random(), y: random()}
+        makeFood();
+        clearInterval(game);
+        game = setInterval(() => {
+            removeAll(field, "snake");
+            drawSnake();
+        }, gameSpeed);
+    }
+    else{
+        snake.pop();
+    }
 }
 
 const startGame = () => {
-    setInterval(() => {
+    startCard.style.display = "none";
+    game = setInterval(() => {
         removeAll(field, "snake");
         drawSnake();
-    }, 100)
+    }, gameSpeed);
     makeFood();
+}
+
+const stopGame = () => {
+    startCard.style.display = "block";
+    removeAll(field, "snake");
+    removeAll(field, "food");
+    clearInterval(game);
+    snake = [{ x: 10, y: 10 }];
+    direction = "left";
+    food = {x: random(), y: random()};
+}
+
+const collision = () => {
+    let head = {...snake[0]};
+    for(let i = 1; i < snake.length; i++){
+        if(head.x == snake[i].x && head.y == snake[i].y){
+            stopGame();
+        }
+    }
+    snake.forEach((snakePart) => {
+        if(snakePart.x > 20 || snakePart.x < 0 || snakePart.y > 20 || snakePart.y < 0 ){
+            stopGame();
+        }
+    })
 }
 
 document.addEventListener("keydown", (event) => {
     switch(event.key){
         case " ":
-            startCard.style.display = "none";
             startGame();
             break;
         case "ArrowUp":
