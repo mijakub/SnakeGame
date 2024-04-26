@@ -18,7 +18,6 @@
     grid-template-columns: repeat(20, 20px);
     grid-template-rows: repeat(20, 20px);
     background-color: lightgreen;
-    margin: 10px;
     position: absolute;
 }
 .snake{
@@ -35,4 +34,12 @@
     position: absolute;
     top: 180px;
     left: 130px;
+}
+#container{
+    width: 400px;
+    height: 500px;
+}
+#scores{
+    margin-bottom: 5px;
+    color: white;
 }
