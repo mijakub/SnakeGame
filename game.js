@@ -2,23 +2,26 @@ const field = document.getElementById("playingField");
 const startCard = document.getElementById("start");
 const scoreText = document.getElementById("score");
 const highScoreText = document.getElementById("highscore");
+const loseCard = document.getElementById("lose");
+const scoreAlert = document.getElementById("scoreAlert");
 let snake = [{x: 10, y: 10}];
 let food = {x: random(), y: random()};
 let direction = "left";
 let gameSpeed = 180;
 let score = 0;
 let highScore = 0;
+let gameStatus = 0;
 
 function random(){
     return Math.floor(Math.random() * 20) + 1;
 }
 
-function findPosition(element, position){
+const findPosition = (element, position) => {
     element.style.gridColumn = position.x;
     element.style.gridRow = position.y;
 }
 
-function removeAll(parent, nameOfClass){
+const removeAll = (parent, nameOfClass) => {
     document.querySelectorAll("." + nameOfClass).forEach((element) => {
         element.parentNode.removeChild(element);
     })
@@ -44,6 +47,13 @@ const makeFood = () => {
     element.className = "food";
     findPosition(element, food);
     field.appendChild(element);
+    snake.forEach((snakePart) => {
+        if(snakePart.x == food.x && snakePart.y == food.y){
+            food = {x: random(), y: random()};
+            removeAll(field, "food");
+            makeFood();
+        }
+    });
 }
 
 const moveSnake = () => {
@@ -82,6 +92,7 @@ const moveSnake = () => {
 }
 
 const startGame = () => {
+    gameStatus = 1;
     startCard.style.display = "none";
     game = setInterval(() => {
         removeAll(field, "snake");
@@ -91,18 +102,24 @@ const startGame = () => {
 }
 
 const stopGame = () => {
-    startCard.style.display = "block";
+    loseCard.style.display = "block";
     removeAll(field, "snake");
     removeAll(field, "food");
     clearInterval(game);
     updateHS();
-    snake = [{ x: 10, y: 10 }];
-    direction = "left";
-    food = {x: random(), y: random()};
-    score = 0;
-    gameSpeed = 180;
-    scoreText.innerHTML = `Score: ${score}`;
+    scoreAlert.innerHTML = `Score: ${score}`;
     highScoreText.innerHTML = `Highest Score: ${highScore}`;
+    score = 0;
+    scoreText.innerHTML = `Score: ${score}`;
+    setTimeout(() => {
+        loseCard.style.display = "none";
+        startCard.style.display = "block";
+        snake = [{ x: 10, y: 10 }];
+        direction = "left";
+        food = {x: random(), y: random()};
+        gameSpeed = 180;
+        gameStatus = 0;
+    },1500)
 }
 
 const collision = () => {
@@ -132,37 +149,9 @@ const updateSpeed = () => {
 }
 
 document.addEventListener("keydown", (event) => {
-    switch(event.key){
-        case " ":
-            startGame();
-            break;
-        case "ArrowUp":
-            direction = "up";
-            break;
-        case "ArrowDown":
-            direction = "down";
-            break;
-        case "ArrowLeft":
-            direction = "left";
-            break;
-        case "ArrowRight":
-            direction = "right";
-            break;
-        case "w":
-            direction = "up";
-            drawSnake()
-            break;
-        case "s":
-            direction = "down";
-            drawSnake()
-            break;
-        case "a":
-            direction = "left";
-            drawSnake()
-            break;
-        case "d":
-            direction = "right";
-            drawSnake()
-            break;
-    }
+    if(event.key == " " && gameStatus == 0) startGame();
+    else if(event.key == "ArrowUp" || event.key == "W" || event.key == "w") direction = "up";
+    else if(event.key == "ArrowDown" || event.key == "S" || event.key == "s") direction = "down";
+    else if(event.key == "ArrowLeft" || event.key == "A" || event.key == "a") direction = "left";
+    else if(event.key == "ArrowRight" || event.key == "D" || event.key == "d") direction = "right";
 })
